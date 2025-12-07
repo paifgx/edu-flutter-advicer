@@ -1,35 +1,33 @@
-import 'dart:math';
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
 
 import '../../core/exceptions/exceptions.dart';
 import '../models/advice_model.dart';
 
 abstract class AdviceRemoteDataSource {
-  /// Simuliert einen Netzwerkanruf und liefert einen zufälligen Ratschlag.
-  /// Wir nutzen hier noch keine echte API, um die Architektur zu zeigen.
+  /// Ruft einen zufälligen Ratschlag von der Advice Slip API ab.
   Future<AdviceModel> getRandomAdviceFromApi();
 }
 
 class AdviceRemoteDataSourceImpl implements AdviceRemoteDataSource {
-  final _advices = const [
-    "Don't eat yellow snow.",
-    "Simplicity is the ultimate sophistication.",
-    "Never trust a computer you can't throw out a window.",
-    "Measure twice, cut once.",
-    "If in doubt, log it out.",
-  ];
+  final http.Client client;
+
+  AdviceRemoteDataSourceImpl({required this.client});
 
   @override
   Future<AdviceModel> getRandomAdviceFromApi() async {
-    await Future.delayed(const Duration(milliseconds: 800));
+    final response = await client.get(
+      Uri.parse('https://api.adviceslip.com/advice'),
+      headers: {'Accept': 'application/json'},
+    );
 
-    final random = Random();
-    // 20% Fehlerrate simulieren
-    final isError = random.nextInt(5) == 0;
-    if (isError) throw ServerException();
+    if (response.statusCode != 200) {
+      throw ServerException();
+    }
 
-    final adviceText = _advices[random.nextInt(_advices.length)];
-    final id = random.nextInt(1000);
-    return AdviceModel(advice: adviceText, id: id);
+    final decoded = jsonDecode(response.body) as Map<String, dynamic>;
+    return AdviceModel.fromJson(decoded);
   }
 }
 
