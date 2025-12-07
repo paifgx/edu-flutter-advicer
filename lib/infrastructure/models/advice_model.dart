@@ -9,5 +9,14 @@ class AdviceModel extends AdviceEntity {
       id: json['slip']['id'],
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'slip': {
+        'advice': advice,
+        'id': id,
+      },
+    };
+  }
 }
 

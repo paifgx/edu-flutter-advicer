@@ -8,11 +8,13 @@
 import 'package:advicer/injection.dart' as di;
 import 'package:advicer/main.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUpAll(() async {
+    SharedPreferences.setMockInitialValues({});
     await di.init();
   });
 

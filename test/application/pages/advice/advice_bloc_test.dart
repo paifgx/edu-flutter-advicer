@@ -28,7 +28,7 @@ void main() {
     act: (bloc) => bloc.add(const AdviceRequestedEvent()),
     expect: () => [
       const AdviceLoading(),
-      const AdviceLoaded(advice: 'Test'),
+      const AdviceLoaded(advice: 'Test', id: 1),
     ],
     verify: (_) {
       verify(() => mockUseCase()).called(1);

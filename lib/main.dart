@@ -4,6 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'application/pages/advice/bloc/advice_bloc.dart';
 import 'application/pages/advice/bloc/advice_event.dart';
 import 'application/pages/advice/bloc/advice_state.dart';
+import 'application/pages/advice/bloc/favorites/favorites_bloc.dart';
+import 'application/pages/advice/bloc/favorites/favorites_event.dart';
+import 'application/pages/advice/bloc/favorites/favorites_state.dart';
+import 'domain/entities/advice_entity.dart';
 import 'injection.dart' as di;
 
 Future<void> main() async {
@@ -44,8 +48,13 @@ class AdvicePage extends StatefulWidget {
 class _AdvicePageState extends State<AdvicePage> {
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => di.sl<AdviceBloc>(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => di.sl<AdviceBloc>()),
+        BlocProvider(
+          create: (_) => di.sl<FavoritesBloc>()..add(const LoadFavoritesEvent()),
+        ),
+      ],
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Advicer'),
@@ -123,6 +132,16 @@ class _AdvicePageState extends State<AdvicePage> {
                   },
                 ),
                 const Spacer(),
+                BlocBuilder<FavoritesBloc, FavoritesState>(
+                  builder: (context, state) {
+                    final count = state is FavoritesLoaded ? state.favorites.length : 0;
+                    return Text(
+                      'Favoriten: $count',
+                      style: const TextStyle(color: Colors.grey),
+                    );
+                  },
+                ),
+                const SizedBox(height: 8),
                 Builder(
                   builder: (buttonContext) => SizedBox(
                     width: double.infinity,
@@ -141,7 +160,97 @@ class _AdvicePageState extends State<AdvicePage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 12),
+                BlocBuilder<AdviceBloc, AdviceState>(
+                  builder: (context, state) {
+                    if (state is AdviceLoaded) {
+                      final advice = AdviceEntity(advice: state.advice, id: state.id);
+                      return SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          icon: const Icon(Icons.favorite_border),
+                          onPressed: () => context
+                              .read<FavoritesBloc>()
+                              .add(AddFavoriteEvent(advice: advice)),
+                          label: const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 12.0),
+                            child: Text('Save to favorites'),
+                          ),
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
+                Builder(
+                  builder: (buttonContext) => SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () => buttonContext
+                          .read<FavoritesBloc>()
+                          .add(const LoadFavoritesEvent()),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 14.0),
+                        child: Text(
+                          'Reload favorites',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Favoriten',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  height: 160,
+                  child: BlocBuilder<FavoritesBloc, FavoritesState>(
+                    builder: (context, state) {
+                      if (state is FavoritesLoading) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (state is FavoritesError) {
+                        return Center(
+                          child: Text(
+                            state.message,
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                        );
+                      } else if (state is FavoritesLoaded) {
+                        if (state.favorites.isEmpty) {
+                          return const Center(
+                            child: Text('Keine Favoriten gespeichert.'),
+                          );
+                        }
+                        return ListView.builder(
+                          itemCount: state.favorites.length,
+                          itemBuilder: (context, index) {
+                            final fav = state.favorites[index];
+                            return ListTile(
+                              title: Text(fav.advice),
+                              trailing: IconButton(
+                                icon: const Icon(Icons.delete_outline),
+                                onPressed: () => context
+                                    .read<FavoritesBloc>()
+                                    .add(RemoveFavoriteEvent(id: fav.id)),
+                              ),
+                            );
+                          },
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
+                ),
+                const SizedBox(height: 16),
               ],
             ),
           ),

@@ -17,10 +17,11 @@ class AdviceLoading extends AdviceState {
 
 class AdviceLoaded extends AdviceState {
   final String advice;
-  const AdviceLoaded({required this.advice});
+  final int id;
+  const AdviceLoaded({required this.advice, required this.id});
 
   @override
-  List<Object?> get props => [advice];
+  List<Object?> get props => [advice, id];
 }
 
 class AdviceError extends AdviceState {

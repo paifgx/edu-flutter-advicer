@@ -22,7 +22,7 @@ class AdviceBloc extends Bloc<AdviceEvent, AdviceState> {
 
     failureOrAdvice.fold(
       (failure) => emit(AdviceError(message: _mapFailureToMessage(failure))),
-      (advice) => emit(AdviceLoaded(advice: advice.advice)),
+      (advice) => emit(AdviceLoaded(advice: advice.advice, id: advice.id)),
     );
   }
 
