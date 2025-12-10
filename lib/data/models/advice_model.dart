@@ -5,9 +5,8 @@ class AdviceModel extends AdviceEntity {
 
   factory AdviceModel.fromJson(Map<String, dynamic> json) {
     return AdviceModel(
-      advice: json['slip']['advice'],
+      advice: json['slip']['content_text'],
       id: json['slip']['id'],
     );
   }
 }
-

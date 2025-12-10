@@ -30,4 +30,3 @@ class AdviceRemoteDataSourceImpl implements AdviceRemoteDataSource {
     return AdviceModel.fromJson(decoded);
   }
 }
-

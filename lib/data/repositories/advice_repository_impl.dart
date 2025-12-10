@@ -3,7 +3,7 @@ import 'package:dartz/dartz.dart';
 import '../../core/exceptions/exceptions.dart';
 import '../../core/failures/failures.dart';
 import '../../domain/entities/advice_entity.dart';
-import '../../domain/repositories/advice_repository.dart';
+import 'advice_repository.dart';
 import '../datasources/advice_remote_data_source.dart';
 
 class AdviceRepositoryImpl implements AdviceRepository {
@@ -23,4 +23,3 @@ class AdviceRepositoryImpl implements AdviceRepository {
     }
   }
 }
-

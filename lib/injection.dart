@@ -3,9 +3,9 @@ import 'package:http/http.dart' as http;
 
 import 'application/pages/advice/bloc/advice_bloc.dart';
 import 'domain/usecases/get_advice_usecase.dart';
-import 'infrastructure/datasources/advice_remote_data_source.dart';
-import 'infrastructure/repositories/advice_repository_impl.dart';
-import 'domain/repositories/advice_repository.dart';
+import 'data/datasources/advice_remote_data_source.dart';
+import 'data/repositories/advice_repository_impl.dart';
+import 'data/repositories/advice_repository.dart';
 
 final sl = GetIt.instance;
 
@@ -29,4 +29,3 @@ Future<void> init() async {
     () => AdviceRemoteDataSourceImpl(client: sl()),
   );
 }
-

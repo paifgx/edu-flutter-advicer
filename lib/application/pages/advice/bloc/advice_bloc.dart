@@ -37,4 +37,3 @@ class AdviceBloc extends Bloc<AdviceEvent, AdviceState> {
     }
   }
 }
-

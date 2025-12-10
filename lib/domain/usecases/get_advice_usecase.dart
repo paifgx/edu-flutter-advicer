@@ -2,7 +2,7 @@ import 'package:dartz/dartz.dart';
 
 import '../../core/failures/failures.dart';
 import '../entities/advice_entity.dart';
-import '../repositories/advice_repository.dart';
+import '../../data/repositories/advice_repository.dart';
 
 class GetAdviceUseCase {
   final AdviceRepository adviceRepository;
@@ -13,4 +13,3 @@ class GetAdviceUseCase {
     return adviceRepository.getAdviceFromApi();
   }
 }
-
